@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Hexo 基本使用依赖环境部署首先需要安装 Node 和 Git。然后进入正题，安装 Hexo。 1sudo npm install -g hexo 初始化终端cd到一个你选定的目录（比如创建一个blog文件，$cd blog），执行hexo init命令： 1hexo init 在blog目录下，执行如下命令，安装npm： 1npm install 执行如下命令，开启hexo服务器： 1hexo">
+<meta name="keywords" content="Hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Hexo 搭建自己的独立博客">
+<meta property="og:url" content="http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/index.html">
+<meta property="og:site_name" content="Gcyml&#39;s Blog">
+<meta property="og:description" content="Hexo 基本使用依赖环境部署首先需要安装 Node 和 Git。然后进入正题，安装 Hexo。 1sudo npm install -g hexo 初始化终端cd到一个你选定的目录（比如创建一个blog文件，$cd blog），执行hexo init命令： 1hexo init 在blog目录下，执行如下命令，安装npm： 1npm install 执行如下命令，开启hexo服务器： 1hexo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/使用%20Hexo%20搭建自己的独立博客/初始页面.png">
+<meta property="og:updated_time" content="2019-01-15T16:42:37.429Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 Hexo 搭建自己的独立博客">
+<meta name="twitter:description" content="Hexo 基本使用依赖环境部署首先需要安装 Node 和 Git。然后进入正题，安装 Hexo。 1sudo npm install -g hexo 初始化终端cd到一个你选定的目录（比如创建一个blog文件，$cd blog），执行hexo init命令： 1hexo init 在blog目录下，执行如下命令，安装npm： 1npm install 执行如下命令，开启hexo服务器： 1hexo">
+<meta name="twitter:image" content="http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/使用%20Hexo%20搭建自己的独立博客/初始页面.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/">
+
+
+
+
+
+  <title>使用 Hexo 搭建自己的独立博客 | Gcyml's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Gcyml's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">哪里有彩虹告诉我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gcyml">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/user.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gcyml's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">使用 Hexo 搭建自己的独立博客</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-15T23:38:11+08:00">
+                2019-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/15/使用-Hexo-搭建自己的独立博客/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/01/15/使用-Hexo-搭建自己的独立博客/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Hexo-基本使用"><a href="#Hexo-基本使用" class="headerlink" title="Hexo 基本使用"></a>Hexo 基本使用</h2><h3 id="依赖环境部署"><a href="#依赖环境部署" class="headerlink" title="依赖环境部署"></a>依赖环境部署</h3><p>首先需要安装 Node 和 Git。然后进入正题，安装 Hexo。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo npm install -g hexo</span><br></pre></td></tr></table></figure>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>终端cd到一个你选定的目录（比如创建一个blog文件，$cd blog），执行hexo init命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>在blog目录下，执行如下命令，安装npm：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>执行如下命令，开启hexo服务器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<p>此时，浏览器中打开网址<a href="http://localhost:4000，能看到如下页面：" target="_blank" rel="noopener">http://localhost:4000，能看到如下页面：</a></p>
+<p><img src="/2019/01/15/使用-Hexo-搭建自己的独立博客/使用 Hexo 搭建自己的独立博客/初始页面.png" alt="hexo 初始页面"></p>
+<h2 id="Hexo-github-io-发布博客"><a href="#Hexo-github-io-发布博客" class="headerlink" title="Hexo + github.io 发布博客"></a>Hexo + github.io 发布博客</h2><h2 id="创建-github-个人博客仓库"><a href="#创建-github-个人博客仓库" class="headerlink" title="创建 github 个人博客仓库"></a>创建 github 个人博客仓库</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>在 github 创建一个以 “userId + github.io” 的 仓库，如我的 github 用户名是 gcyml，我创建了一个名为 gcyml.github.io 的仓库。</p>
+<p>安装 Hexo 对应插件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<h2 id="上传博客到-github"><a href="#上传博客到-github" class="headerlink" title="上传博客到 github"></a>上传博客到 github</h2><p>刚刚创建的 blog 目录中内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">_config.yml</span><br><span class="line">db.json</span><br><span class="line">node_modules</span><br><span class="line">package.json</span><br><span class="line">scaffolds</span><br><span class="line">source</span><br><span class="line">themes</span><br></pre></td></tr></table></figure>
+<p>切换blog文件夹下，使用文本编辑器打开 _config.yml，修改成下边的样子：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line"><span class="attr">    type:</span> <span class="string">git</span></span><br><span class="line"><span class="attr">    repository:</span> <span class="attr">https://github.com/gcyml/gcyml.github.io.git</span></span><br><span class="line"><span class="attr">    branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>需要注意把 gcyml 换成你自己的用户名</p>
+<p>执行命令，生成静态页面，并上传到 github 上：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+<p>打开链接 <a href="http://gcyml.github.io" target="_blank" rel="noopener">http://gcyml.github.io</a> 即可看到你的个人博客页面了。</p>
+<h2 id="Hexo-引用自带图片"><a href="#Hexo-引用自带图片" class="headerlink" title="Hexo 引用自带图片"></a>Hexo 引用自带图片</h2><p>有两种方法可以实现，一种不用插件，需要 Hexo 版本达到 Hexo3 以上；第二种需要安装 Hexo 插件。</p>
+<h3 id="配置-config-yml"><a href="#配置-config-yml" class="headerlink" title="配置 _config.yml"></a>配置 _config.yml</h3><p>两种方法都需要把 _config.yml 配置文件中的 post_asset_folder 项改为 true。</p>
+<p>配置成功后，每次使用 <code>hexo new</code> 创建出的文章都会生成同名文件夹，把图片放到该文件夹中。</p>
+<h3 id="引用自带图片实现"><a href="#引用自带图片实现" class="headerlink" title="引用自带图片实现"></a>引用自带图片实现</h3><h4 id="方法一：不带插件"><a href="#方法一：不带插件" class="headerlink" title="方法一：不带插件"></a>方法一：不带插件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_img 这是一个新的博客的图片.jpg 这是一个新的博客的图片的说明 %&#125;</span><br></pre></td></tr></table></figure>
+<p>用此种方法，而不是以前的 <code>![]()</code> 方法，前提是你的 Hexo 的版本是hexo3 以上，到 package.json 里面看一下吧。如果不是 hexo3 以上的版本，那就只能用第二种方法了。</p>
+<h4 id="安装-Hexo-插件"><a href="#安装-Hexo-插件" class="headerlink" title="安装 Hexo 插件"></a>安装 Hexo 插件</h4><p>前面一种方法我觉得在 Markdown 嵌入标签破坏了一致性，我更倾向于第二种方法。</p>
+<p>安装插件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure>
+<p>把图片放到文章的同名文件夹中，按正常 mearkdown 引用图片即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我现在写了一个段落，并且想在这个段落的某一个地方![图片上传失败...(image.png)]引入一张图片</span><br></pre></td></tr></table></figure>
+<h2 id="用-Hexo-插件备份博客"><a href="#用-Hexo-插件备份博客" class="headerlink" title="用 Hexo 插件备份博客"></a>用 Hexo 插件备份博客</h2><p>因为上传到 github 上面的是 hexo 生成的静态页面，而不是 markdown 源文件。如果要迁移和备份就会比较麻烦。</p>
+<p>网上备份博客的方案多是自己创建一个源文件的分支。但是这种方法，一个是初始化要一个个添加相关配置和源文件，第二个是后续的备份更新也比较麻烦。这里推荐用插件备份的方式。</p>
+<h3 id="安装备份插件"><a href="#安装备份插件" class="headerlink" title="安装备份插件"></a>安装备份插件</h3><p>hexo版本3.x.x</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-git-backup --save</span><br></pre></td></tr></table></figure>
+<p>hexo版本2.x.x</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-git-backup@0.0.91 --save</span><br></pre></td></tr></table></figure>
+<h3 id="配置-config-yml-1"><a href="#配置-config-yml-1" class="headerlink" title="配置_config.yml"></a>配置_config.yml</h3><p>_config.yml 新增</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">backup:</span><br><span class="line">  type: git</span><br><span class="line">  message: hexo blog source</span><br><span class="line">  repository:  </span><br><span class="line">    github: git@github.com:gcyml/gcyml.github.io.git,source #这里改成你自己的，分钟“source”也改成自己的，如果Github不存在会自动新建</span><br></pre></td></tr></table></figure>
+<h3 id="备份到github"><a href="#备份到github" class="headerlink" title="备份到github"></a>备份到github</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo backup</span><br></pre></td></tr></table></figure>
+<p>备份成功后，可以在 github 上查看我们新建的备份分支。迁移博客时，只需要将分支上的数据覆盖到当前目录下即可</p>
+<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p><a href="https://www.cnblogs.com/MuYunyun/p/5927491.html" target="_blank" rel="noopener">基于hexo+github搭建一个独立博客</a></p>
+<p><a href="https://www.jianshu.com/p/cf0628478a4e" target="_blank" rel="noopener">Hexo发布博客引用自带图片的方法</a></p>
+<p><a href="https://faceghost.com/article/866261" target="_blank" rel="noopener">Hexo 搭建个人博客教程 - 8 - blog备份工具hexo-git-backup - 2018</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    gcyml
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/" title="使用 Hexo 搭建自己的独立博客">http://yoursite.com/2019/01/15/使用-Hexo-搭建自己的独立博客/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/15/单硬盘安装 UEFI 启动 Win10 和 Ubuntu 双系统/" rel="next" title="单硬盘安装 UEFI 启动 Win10 和 Ubuntu 双系统">
+                <i class="fa fa-chevron-left"></i> 单硬盘安装 UEFI 启动 Win10 和 Ubuntu 双系统
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/user.jpg" alt="gcyml">
+            
+              <p class="site-author-name" itemprop="name">gcyml</p>
+              <p class="site-description motion-element" itemprop="description">个人分享博客</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/gcyml" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:mrwanggc@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo-基本使用"><span class="nav-number">1.</span> <span class="nav-text">Hexo 基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖环境部署"><span class="nav-number">1.1.</span> <span class="nav-text">依赖环境部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">1.2.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo-github-io-发布博客"><span class="nav-number">2.</span> <span class="nav-text">Hexo + github.io 发布博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建-github-个人博客仓库"><span class="nav-number">3.</span> <span class="nav-text">创建 github 个人博客仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备工作"><span class="nav-number">3.1.</span> <span class="nav-text">准备工作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上传博客到-github"><span class="nav-number">4.</span> <span class="nav-text">上传博客到 github</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo-引用自带图片"><span class="nav-number">5.</span> <span class="nav-text">Hexo 引用自带图片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置-config-yml"><span class="nav-number">5.1.</span> <span class="nav-text">配置 _config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用自带图片实现"><span class="nav-number">5.2.</span> <span class="nav-text">引用自带图片实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法一：不带插件"><span class="nav-number">5.2.1.</span> <span class="nav-text">方法一：不带插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-Hexo-插件"><span class="nav-number">5.2.2.</span> <span class="nav-text">安装 Hexo 插件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用-Hexo-插件备份博客"><span class="nav-number">6.</span> <span class="nav-text">用 Hexo 插件备份博客</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装备份插件"><span class="nav-number">6.1.</span> <span class="nav-text">安装备份插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置-config-yml-1"><span class="nav-number">6.2.</span> <span class="nav-text">配置_config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备份到github"><span class="nav-number">6.3.</span> <span class="nav-text">备份到github</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#感谢"><span class="nav-number">7.</span> <span class="nav-text">感谢</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gcyml</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'gcyml',
+            repo: 'blogComment',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '4d56f031a4c58352d8e5ffedc428084e6ab71270',
+            
+                client_id: '04d33d137cfd4fa44380'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
