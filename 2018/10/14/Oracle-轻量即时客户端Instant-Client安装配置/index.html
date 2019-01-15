@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Spring Boot,Mybatis,">
+  <meta name="keywords" content="Oracle,">
 
 
 
@@ -79,18 +79,20 @@
 
 
 
-<meta name="description" content="前言最近有个项目需要用到结构化的数据和非结构化的数据，于是选择了mysql和mongoDb。整个项目是基于Spring Boot创建的，相比于Spring MVC，Spring Boot集成了常用的第三方依赖库，具有搭建迅速，配置更少的优点。">
-<meta name="keywords" content="Spring Boot,Mybatis">
+<meta name="description" content="前言因为工作需要，需要连接oracle，但是oracle客户端实在太大， 安装步骤也比较麻烦，Instant Client 解压就可用，基本的本地连接和Oracle工具比如SQL Plus都可以用，所以果断选择了Oracle Instant Client。 Oracle Instant Client 介绍免费，轻量且易于安装的Oracle数据库工具，库和SDK，用于构建和连接Oracle数据库实例">
+<meta name="keywords" content="Oracle">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring Boot 双数据源Mybatis+MongoDB配置">
-<meta property="og:url" content="http://yoursite.com/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/index.html">
+<meta property="og:title" content="Oracle-轻量即时客户端Instant-Client安装配置">
+<meta property="og:url" content="http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/index.html">
 <meta property="og:site_name" content="Gcyml&#39;s Blog">
-<meta property="og:description" content="前言最近有个项目需要用到结构化的数据和非结构化的数据，于是选择了mysql和mongoDb。整个项目是基于Spring Boot创建的，相比于Spring MVC，Spring Boot集成了常用的第三方依赖库，具有搭建迅速，配置更少的优点。">
+<meta property="og:description" content="前言因为工作需要，需要连接oracle，但是oracle客户端实在太大， 安装步骤也比较麻烦，Instant Client 解压就可用，基本的本地连接和Oracle工具比如SQL Plus都可以用，所以果断选择了Oracle Instant Client。 Oracle Instant Client 介绍免费，轻量且易于安装的Oracle数据库工具，库和SDK，用于构建和连接Oracle数据库实例">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-15T06:59:59.744Z">
+<meta property="og:image" content="http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/Instant%20Client下载页面.jpeg">
+<meta property="og:updated_time" content="2019-01-15T08:46:57.911Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Boot 双数据源Mybatis+MongoDB配置">
-<meta name="twitter:description" content="前言最近有个项目需要用到结构化的数据和非结构化的数据，于是选择了mysql和mongoDb。整个项目是基于Spring Boot创建的，相比于Spring MVC，Spring Boot集成了常用的第三方依赖库，具有搭建迅速，配置更少的优点。">
+<meta name="twitter:title" content="Oracle-轻量即时客户端Instant-Client安装配置">
+<meta name="twitter:description" content="前言因为工作需要，需要连接oracle，但是oracle客户端实在太大， 安装步骤也比较麻烦，Instant Client 解压就可用，基本的本地连接和Oracle工具比如SQL Plus都可以用，所以果断选择了Oracle Instant Client。 Oracle Instant Client 介绍免费，轻量且易于安装的Oracle数据库工具，库和SDK，用于构建和连接Oracle数据库实例">
+<meta name="twitter:image" content="http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/Instant%20Client下载页面.jpeg">
 
 
 
@@ -120,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/">
+  <link rel="canonical" href="http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/">
 
 
 
 
 
-  <title>Spring Boot 双数据源Mybatis+MongoDB配置 | Gcyml's Blog</title>
+  <title>Oracle-轻量即时客户端Instant-Client安装配置 | Gcyml's Blog</title>
   
 
 
@@ -253,7 +255,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="gcyml">
@@ -270,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Spring Boot 双数据源Mybatis+MongoDB配置</h1>
+          <h1 class="post-title" itemprop="name headline">Oracle-轻量即时客户端Instant-Client安装配置</h1>
         
 
         <div class="post-meta">
@@ -282,8 +284,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-18T13:35:09+08:00">
-                2018-05-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T16:35:38+08:00">
+                2018-10-14
               </time>
             
 
@@ -305,8 +307,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Srping-Boot/" itemprop="url" rel="index">
-                    <span itemprop="name">Srping Boot</span>
+                  <a href="/categories/Oracle/" itemprop="url" rel="index">
+                    <span itemprop="name">Oracle</span>
                   </a>
                 </span>
 
@@ -323,8 +325,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/" itemprop="commentsCount"></span>
+                <a href="/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -352,26 +354,47 @@
       
 
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近有个项目需要用到结构化的数据和非结构化的数据，于是选择了mysql和mongoDb。整个项目是基于Spring Boot创建的，相比于Spring MVC，Spring Boot集成了常用的第三方依赖库，具有搭建迅速，配置更少的优点。<br><a id="more"></a></p>
-<h2 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h2><ul>
-<li>Spring Boot</li>
-<li>Mybatis</li>
-<li>MongoDB</li>
-<li>Mysql</li>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为工作需要，需要连接oracle，但是oracle客户端实在太大， 安装步骤也比较麻烦，Instant Client 解压就可用，基本的本地连接和Oracle工具比如SQL Plus都可以用，所以果断选择了Oracle Instant Client。</p>
+<h2 id="Oracle-Instant-Client-介绍"><a href="#Oracle-Instant-Client-介绍" class="headerlink" title="Oracle Instant Client 介绍"></a>Oracle Instant Client 介绍</h2><p>免费，轻量且易于安装的Oracle数据库工具，库和SDK，用于构建和连接Oracle数据库实例的应用程序。</p>
+<ul>
+<li>Instant Client使应用程序能够连接到本地或远程Oracle数据库以进行开发和生产部署。</li>
+<li>Instant Client库提供必要的网络连接以及基本和高端数据功能，以充分利用Oracle数据库。</li>
+<li>它是流行语言和环境的Oracle API的基础，包括Node.js，Python和PHP，以及为OCI，OCCI，JDBC，ODBC和Pro * C应用程序提供访问。</li>
+<li>Instant Client中包含的工具（如SQL Plus和Oracle Data Pump）提供快速方便的数据访问。</li>
 </ul>
-<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>添加相关第三方依赖</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- mysql依赖 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mybatis.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- mongodb --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-mongodb<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>.yml 配置</p>
-<blockquote>
-<p>此处和普通Spring Boot + Mybatis项目最大不同在于在data节点加入了MongoDB的相关参数，后面会指定MongoDB数据扫描指定的DAO层位置。</p>
-</blockquote>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  datasource:</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">jdbc:mysql://127.0.0.1:3306/dbName?characterEncoding=UTF-8&amp;useSSL=true</span></span><br><span class="line"><span class="attr">    username:</span> <span class="string">mysqlUsername</span></span><br><span class="line"><span class="attr">    password:</span> <span class="string">mysqlPassword</span></span><br><span class="line"><span class="attr">  data:</span></span><br><span class="line"><span class="attr">    mongodb:</span></span><br><span class="line">     </span><br><span class="line"><span class="attr">      host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">      port:</span> <span class="number">12345</span></span><br><span class="line"><span class="attr">      username:</span> <span class="string">mongoUsername</span></span><br><span class="line"><span class="attr">      password:</span> <span class="string">mongoPassword</span></span><br><span class="line"><span class="attr">      database:</span> <span class="string">database</span></span><br><span class="line"><span class="attr">mybatis:</span></span><br><span class="line"><span class="attr">  mapper-locations:</span> <span class="attr">classpath:mapper/*.xml</span></span><br><span class="line"><span class="attr">  type-aliases-package:</span> <span class="string">com.multi.datasource.dao.mysql</span></span><br></pre></td></tr></table></figure>
-<p>主启动类</p>
-<blockquote>
-<p>这里关键添加了@EnableMongoRepositories(“com.multi.datasource.dao.mongo”)这行配置，设置MnogoDB的DAO层扫描路径。</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableMongoRepositories</span>(<span class="string">"com.multi.datasource.dao.mongo"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">         SpringApplication.run(Application.class, args);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>总体思路是通过不同数据源扫描不同路径的DAO层实现，Mybatis<br>和MongDB双数据源的配置还是比较简单的。在此只是简单做个记录。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="下载-Instant-Client-压缩包"><a href="#下载-Instant-Client-压缩包" class="headerlink" title="下载 Instant Client 压缩包"></a>下载 Instant Client 压缩包</h3><p>到 <a href="http://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html" target="_blank" rel="noopener">Oracle Instant Client 下载链接</a> 选择对应的版本下载。在下载页面中，还有可选的SQL*Plus 包和工具包，可按自己选择下载。解压到某一目录下，例如:C:\oracle\instantclient_12_2。把解压目录C:\oracle\instantclient_12_2 添加到环境变量 <strong>PATH</strong> 中<br><img src="/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/Instant Client下载页面.jpeg" alt="Instant Client下载页面"></p>
+<h3 id="配置-tnsnames-ora"><a href="#配置-tnsnames-ora" class="headerlink" title="配置 tnsnames.ora"></a>配置 tnsnames.ora</h3><p>在C:\oracle\instantclient_12_2目录下创建子文件夹network\admin，绝对路径也就是C:\oracle\instantclient_12_2\network\admin，在该目录下新建文件tnsnames.ora。然后添加环境变量<strong>TNS_ADMIN</strong>，值为tnsnames.ora文件所在路径。</p>
+<p><strong>tnsnames.ora</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">orcl =</span><br><span class="line">  (DESCRIPTION =</span><br><span class="line">    (ADDRESS_LIST =</span><br><span class="line">      (ADDRESS = (PROTOCOL = TCP)(HOST = xx.xx.xx.xx)(PORT = 1521))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA =</span><br><span class="line">      (SERVICE_NAME = orcl)</span><br><span class="line">    )</span><br><span class="line">  )</span><br></pre></td></tr></table></figure>
+<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><table>
+<thead>
+<tr>
+<th>变量名</th>
+<th style="text-align:right">变量值</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Path</td>
+<td style="text-align:right">C:\oracle\instantclient_12_2;</td>
+<td style="text-align:center">在Path后面追加instantclient解压路径</td>
+</tr>
+<tr>
+<td>TNS_ADMIN</td>
+<td style="text-align:right">C:\oracle\instantclient_12_2\network\admin</td>
+<td style="text-align:center">tnsnames.ora所在路径</td>
+</tr>
+<tr>
+<td>NLS_LANG</td>
+<td style="text-align:right">SIMPLIFIED CHINESE_CHINA.ZHS16GBK</td>
+<td style="text-align:center">设置Oracle字符语言集</td>
+</tr>
+</tbody>
+</table>
+<p>如果不清楚远程数据库的ORACLE 语言，可以ssh或者telnet到远程机器,在命令界面输入，用命令行连接到数据库，查看NLS_LANGUAGE 的值。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> nls_instance_parameters;</span><br></pre></td></tr></table></figure>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>按上面步骤完成后，PL/SQL Developer即可安装使用，不用做任何配置，非常方便。</p>
 
       
     </div>
@@ -392,7 +415,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/" title="Spring Boot 双数据源Mybatis+MongoDB配置">http://yoursite.com/2018/05/18/Spring-Boot-双数据源Mybatis-MongoDB配置/</a>
+    <a href="http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/" title="Oracle-轻量即时客户端Instant-Client安装配置">http://yoursite.com/2018/10/14/Oracle-轻量即时客户端Instant-Client安装配置/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -407,9 +430,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
-          
-            <a href="/tags/Mybatis/" rel="tag"># Mybatis</a>
+            <a href="/tags/Oracle/" rel="tag"># Oracle</a>
           
         </div>
       
@@ -422,15 +443,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/06/30/LinkedList源码解析/" rel="next" title="LinkedList源码解析">
+                <i class="fa fa-chevron-left"></i> LinkedList源码解析
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/18/Spring-boot-Mybatis-Maven-MySql搭建实例/" rel="prev" title="Spring-boot+Mybatis+Maven+MySql搭建实例">
-                Spring-boot+Mybatis+Maven+MySql搭建实例 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -587,7 +608,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#技术栈"><span class="nav-number">2.</span> <span class="nav-text">技术栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正文"><span class="nav-number">3.</span> <span class="nav-text">正文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Oracle-Instant-Client-介绍"><span class="nav-number">2.</span> <span class="nav-text">Oracle Instant Client 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载-Instant-Client-压缩包"><span class="nav-number">3.1.</span> <span class="nav-text">下载 Instant Client 压缩包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置-tnsnames-ora"><span class="nav-number">3.2.</span> <span class="nav-text">配置 tnsnames.ora</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置环境变量"><span class="nav-number">3.3.</span> <span class="nav-text">设置环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
             
 
           </div>

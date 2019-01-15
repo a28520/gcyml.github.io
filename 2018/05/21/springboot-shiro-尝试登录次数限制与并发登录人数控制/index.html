@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Spring Boot,Shiro,Mybatis-Plus,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="源码项目地址   尝试登录次数控制实现实现原理Realm在验证用户身份的时候，要进行密码匹配。最简单的情况就是明文直接匹配，然后就是加密匹配，这里的匹配工作则就是交给CredentialsMatcher来完成的。我们在这里继承这个接口，自定义一个密码匹配器，缓存入键值对用户名以及匹配次数，若通过密码匹配，则删除该键值对，若不匹配则匹配次数自增。超过给定的次数限制则抛出错误。这里缓存用的是ehcac">
+<meta name="keywords" content="Spring Boot,Shiro,Mybatis-Plus">
+<meta property="og:type" content="article">
+<meta property="og:title" content="springboot-shiro-尝试登录次数限制与并发登录人数控制">
+<meta property="og:url" content="http://yoursite.com/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/index.html">
+<meta property="og:site_name" content="Gcyml&#39;s Blog">
+<meta property="og:description" content="源码项目地址   尝试登录次数控制实现实现原理Realm在验证用户身份的时候，要进行密码匹配。最简单的情况就是明文直接匹配，然后就是加密匹配，这里的匹配工作则就是交给CredentialsMatcher来完成的。我们在这里继承这个接口，自定义一个密码匹配器，缓存入键值对用户名以及匹配次数，若通过密码匹配，则删除该键值对，若不匹配则匹配次数自增。超过给定的次数限制则抛出错误。这里缓存用的是ehcac">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-15T08:54:11.818Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="springboot-shiro-尝试登录次数限制与并发登录人数控制">
+<meta name="twitter:description" content="源码项目地址   尝试登录次数控制实现实现原理Realm在验证用户身份的时候，要进行密码匹配。最简单的情况就是明文直接匹配，然后就是加密匹配，这里的匹配工作则就是交给CredentialsMatcher来完成的。我们在这里继承这个接口，自定义一个密码匹配器，缓存入键值对用户名以及匹配次数，若通过密码匹配，则删除该键值对，若不匹配则匹配次数自增。超过给定的次数限制则抛出错误。这里缓存用的是ehcac">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/">
+
+
+
+
+
+  <title>springboot-shiro-尝试登录次数限制与并发登录人数控制 | Gcyml's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Gcyml's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">哪里有彩虹告诉我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gcyml">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/user.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gcyml's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">springboot-shiro-尝试登录次数限制与并发登录人数控制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T16:41:06+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Shiro/" itemprop="url" rel="index">
+                    <span itemprop="name">Shiro</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://github.com/a28520/shiro-example/tree/master/shiro-charter3" target="_blank" rel="noopener">源码项目地址</a>  </p>
+<h2 id="尝试登录次数控制实现"><a href="#尝试登录次数控制实现" class="headerlink" title="尝试登录次数控制实现"></a>尝试登录次数控制实现</h2><h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>Realm在验证用户身份的时候，要进行密码匹配。最简单的情况就是明文直接匹配，然后就是加密匹配，这里的匹配工作则就是交给CredentialsMatcher来完成的。我们在这里继承这个接口，自定义一个密码匹配器，缓存入键值对用户名以及匹配次数，若通过密码匹配，则删除该键值对，若不匹配则匹配次数自增。超过给定的次数限制则抛出错误。这里缓存用的是ehcache。</p>
+<h3 id="shiro-ehcache配置"><a href="#shiro-ehcache配置" class="headerlink" title="shiro-ehcache配置"></a>shiro-ehcache配置</h3><p><strong>maven依赖</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.shiro<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>shiro-ehcache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>ehcache配置</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ehcache</span> <span class="attr">name</span>=<span class="string">"es"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">"java.io.tmpdir"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">       name:缓存名称。</span></span><br><span class="line"><span class="comment">       maxElementsInMemory:缓存最大数目</span></span><br><span class="line"><span class="comment">       maxElementsOnDisk：硬盘最大缓存个数。</span></span><br><span class="line"><span class="comment">       eternal:对象是否永久有效，一但设置了，timeout将不起作用。</span></span><br><span class="line"><span class="comment">       overflowToDisk:是否保存到磁盘，当系统当机时</span></span><br><span class="line"><span class="comment">       timeToIdleSeconds:设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。</span></span><br><span class="line"><span class="comment">       timeToLiveSeconds:设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=false对象不是永久有效时使用，默认是0.，也就是对象存活时间无穷大。</span></span><br><span class="line"><span class="comment">       diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store persists between restarts of the Virtual Machine. The default value is false.</span></span><br><span class="line"><span class="comment">       diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区。</span></span><br><span class="line"><span class="comment">       diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。</span></span><br><span class="line"><span class="comment">       memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。</span></span><br><span class="line"><span class="comment">        clearOnFlush：内存数量最大时是否清除。</span></span><br><span class="line"><span class="comment">         memoryStoreEvictionPolicy:</span></span><br><span class="line"><span class="comment">            Ehcache的三种清空策略;</span></span><br><span class="line"><span class="comment">            FIFO，first in first out，这个是大家最熟的，先进先出。</span></span><br><span class="line"><span class="comment">            LFU， Less Frequently Used，就是上面例子中使用的策略，直白一点就是讲一直以来最少被使用的。如上面所讲，缓存的元素有一个hit属性，hit值最小的将会被清出缓存。</span></span><br><span class="line"><span class="comment">            LRU，Least Recently Used，最近最少使用的，缓存的元素有一个时间戳，当缓存容量满了，而又需要腾出地方来缓存新的元素的时候，那么现有缓存元素中时间戳离当前时间最远的元素将被清出缓存。</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></span><br><span class="line"><span class="tag">            <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">eternal</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">timeToIdleSeconds</span>=<span class="string">"120"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">timeToLiveSeconds</span>=<span class="string">"120"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">diskPersistent</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">diskExpiryThreadIntervalSeconds</span>=<span class="string">"120"</span></span></span><br><span class="line"><span class="tag">    /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 登录记录缓存锁定10分钟 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"passwordRetryCache"</span></span></span><br><span class="line"><span class="tag">           <span class="attr">maxEntriesLocalHeap</span>=<span class="string">"2000"</span></span></span><br><span class="line"><span class="tag">           <span class="attr">eternal</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">"3600"</span></span></span><br><span class="line"><span class="tag">           <span class="attr">timeToLiveSeconds</span>=<span class="string">"0"</span></span></span><br><span class="line"><span class="tag">           <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">           <span class="attr">statistics</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="RetryLimitCredentialsMatcher"><a href="#RetryLimitCredentialsMatcher" class="headerlink" title="#RetryLimitCredentialsMatcher"></a>#RetryLimitCredentialsMatcher</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * 验证器，增加了登录次数校验功能 </span></span><br><span class="line"><span class="comment"> * 此类不对密码加密</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wgc</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RetryLimitCredentialsMatcher</span> <span class="keyword">extends</span> <span class="title">SimpleCredentialsMatcher</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger log = LoggerFactory.getLogger(RetryLimitCredentialsMatcher.class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> maxRetryNum = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> EhCacheManager shiroEhcacheManager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxRetryNum</span><span class="params">(<span class="keyword">int</span> maxRetryNum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.maxRetryNum = maxRetryNum;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RetryLimitCredentialsMatcher</span><span class="params">(EhCacheManager shiroEhcacheManager)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">this</span>.shiroEhcacheManager = shiroEhcacheManager; </span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">doCredentialsMatch</span><span class="params">(AuthenticationToken token, AuthenticationInfo info)</span> </span>&#123;  </span><br><span class="line">    	Cache&lt;String, AtomicInteger&gt; passwordRetryCache = shiroEhcacheManager.getCache(<span class="string">"passwordRetryCache"</span>);</span><br><span class="line">        String username = (String) token.getPrincipal();  </span><br><span class="line">        <span class="comment">//retry count + 1  </span></span><br><span class="line">        AtomicInteger retryCount = passwordRetryCache.get(username);  </span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == retryCount) &#123;  </span><br><span class="line">            retryCount = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">            passwordRetryCache.put(username, retryCount);  </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (retryCount.incrementAndGet() &gt; maxRetryNum) &#123;</span><br><span class="line">        	log.warn(<span class="string">"用户[&#123;&#125;]进行登录验证..失败验证超过&#123;&#125;次"</span>, username, maxRetryNum);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ExcessiveAttemptsException(<span class="string">"username: "</span> + username + <span class="string">" tried to login more than 5 times in period"</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">boolean</span> matches = <span class="keyword">super</span>.doCredentialsMatch(token, info);  </span><br><span class="line">        <span class="keyword">if</span> (matches) &#123;  </span><br><span class="line">            <span class="comment">//clear retry data  </span></span><br><span class="line">        	passwordRetryCache.remove(username);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> matches;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Shiro配置修改"><a href="#Shiro配置修改" class="headerlink" title="Shiro配置修改"></a>Shiro配置修改</h3><p><strong>注入CredentialsMatcher</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 缓存管理器</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> cacheManager</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> EhCacheManager <span class="title">ehCacheManager</span><span class="params">()</span></span>&#123;</span><br><span class="line">    EhCacheManager cacheManager = <span class="keyword">new</span> EhCacheManager();</span><br><span class="line">    cacheManager.setCacheManagerConfigFile(<span class="string">"classpath:config/ehcache-shiro.xml"</span>);</span><br><span class="line">    <span class="keyword">return</span> cacheManager;</span><br><span class="line">&#125;</span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 限制登录次数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 匹配器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> CredentialsMatcher <span class="title">retryLimitCredentialsMatcher</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    RetryLimitCredentialsMatcher retryLimitCredentialsMatcher = <span class="keyword">new</span> RetryLimitCredentialsMatcher(ehCacheManager());</span><br><span class="line">    retryLimitCredentialsMatcher.setMaxRetryNum(<span class="number">5</span>);</span><br><span class="line">    <span class="keyword">return</span> retryLimitCredentialsMatcher;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> <strong>realm添加认证器</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myShiroRealm.setCredentialsMatcher(retryLimitCredentialsMatcher());</span><br></pre></td></tr></table></figure>
+<h2 id="并发在线人数控制实现"><a href="#并发在线人数控制实现" class="headerlink" title="并发在线人数控制实现"></a>并发在线人数控制实现</h2><h3 id="KickoutSessionControlFilter"><a href="#KickoutSessionControlFilter" class="headerlink" title="KickoutSessionControlFilter"></a>KickoutSessionControlFilter</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 并发登录人数控制</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wgc</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KickoutSessionControlFilter</span> <span class="keyword">extends</span> <span class="title">AccessControlFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(KickoutSessionControlFilter.class);</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 踢出后到的地址</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	<span class="keyword">private</span> String kickoutUrl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 踢出之前登录的/之后登录的用户 默认踢出之前登录的用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> kickoutAfter = <span class="keyword">false</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 同一个帐号最大会话数 默认1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> maxSession = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String kickoutAttrName = <span class="string">"kickout"</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> SessionManager sessionManager; </span><br><span class="line">	<span class="keyword">private</span> Cache&lt;String, Deque&lt;Serializable&gt;&gt; cache; </span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setKickoutUrl</span><span class="params">(String kickoutUrl)</span> </span>&#123; </span><br><span class="line">		<span class="keyword">this</span>.kickoutUrl = kickoutUrl; </span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setKickoutAfter</span><span class="params">(<span class="keyword">boolean</span> kickoutAfter)</span> </span>&#123; </span><br><span class="line">		<span class="keyword">this</span>.kickoutAfter = kickoutAfter;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxSession</span><span class="params">(<span class="keyword">int</span> maxSession)</span> </span>&#123; </span><br><span class="line">		<span class="keyword">this</span>.maxSession = maxSession; </span><br><span class="line">	&#125; </span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSessionManager</span><span class="params">(SessionManager sessionManager)</span> </span>&#123; </span><br><span class="line">		<span class="keyword">this</span>.sessionManager = sessionManager; </span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 	设置Cache的key的前缀</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCacheManager</span><span class="params">(CacheManager cacheManager)</span> </span>&#123; </span><br><span class="line">		<span class="keyword">this</span>.cache = cacheManager.getCache(<span class="string">"shiro-kickout-session"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isAccessAllowed</span><span class="params">(ServletRequest request, ServletResponse response, Object mappedValue)</span></span></span><br><span class="line"><span class="function">			<span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125; </span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">onAccessDenied</span><span class="params">(ServletRequest request, ServletResponse response)</span></span></span><br><span class="line"><span class="function">			<span class="keyword">throws</span> Exception </span>&#123; </span><br><span class="line">		Subject subject = getSubject(request, response); </span><br><span class="line">		<span class="keyword">if</span>(!subject.isAuthenticated() &amp;&amp; !subject.isRemembered())</span><br><span class="line">		&#123; </span><br><span class="line">			<span class="comment">//如果没有登录，直接进行之后的流程 </span></span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">		&#125; </span><br><span class="line">		</span><br><span class="line">		Session session = subject.getSession();</span><br><span class="line">		UserInfo user = (UserInfo) subject.getPrincipal(); </span><br><span class="line">		String username = user.getUsername();</span><br><span class="line">		Serializable sessionId = session.getId();</span><br><span class="line">		</span><br><span class="line">		logger.info(<span class="string">"进入KickoutControl, sessionId:&#123;&#125;"</span>, sessionId);</span><br><span class="line">		<span class="comment">//读取缓存 没有就存入 </span></span><br><span class="line">		Deque&lt;Serializable&gt; deque = cache.get(username); </span><br><span class="line">		 <span class="keyword">if</span>(deque == <span class="keyword">null</span>) &#123;</span><br><span class="line">			 deque = <span class="keyword">new</span> LinkedList&lt;Serializable&gt;();  </span><br><span class="line">		     cache.put(username, deque);  </span><br><span class="line">		 &#125;  </span><br><span class="line">		 </span><br><span class="line">		<span class="comment">//如果队列里没有此sessionId，且用户没有被踢出；放入队列</span></span><br><span class="line">		<span class="keyword">if</span>(!deque.contains(sessionId) &amp;&amp; session.getAttribute(kickoutAttrName) == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="comment">//将sessionId存入队列 </span></span><br><span class="line">			deque.push(sessionId); </span><br><span class="line">		&#125; </span><br><span class="line">		logger.info(<span class="string">"deque.size:&#123;&#125;"</span>,deque.size());</span><br><span class="line">		<span class="comment">//如果队列里的sessionId数超出最大会话数，开始踢人</span></span><br><span class="line">		<span class="keyword">while</span>(deque.size() &gt; maxSession) &#123; </span><br><span class="line">			Serializable kickoutSessionId = <span class="keyword">null</span>; </span><br><span class="line">			<span class="keyword">if</span>(kickoutAfter) &#123; </span><br><span class="line">				<span class="comment">//如果踢出后者 </span></span><br><span class="line">				kickoutSessionId = deque.removeFirst(); </span><br><span class="line">			&#125; <span class="keyword">else</span> &#123; </span><br><span class="line">				<span class="comment">//否则踢出前者 </span></span><br><span class="line">				kickoutSessionId = deque.removeLast(); </span><br><span class="line">			&#125; </span><br><span class="line">			</span><br><span class="line">			<span class="comment">//踢出后再更新下缓存队列</span></span><br><span class="line">			cache.put(username, deque); </span><br><span class="line">			<span class="keyword">try</span> &#123; </span><br><span class="line">				<span class="comment">//获取被踢出的sessionId的session对象</span></span><br><span class="line">				Session kickoutSession = sessionManager.getSession(<span class="keyword">new</span> DefaultSessionKey(kickoutSessionId));</span><br><span class="line">				<span class="keyword">if</span>(kickoutSession != <span class="keyword">null</span>) &#123; </span><br><span class="line">					<span class="comment">//设置会话的kickout属性表示踢出了 </span></span><br><span class="line">					kickoutSession.setAttribute(kickoutAttrName, <span class="keyword">true</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">				logger.error(e.getMessage());</span><br><span class="line">			&#125; </span><br><span class="line">		&#125; </span><br><span class="line">		<span class="comment">//如果被踢出了，直接退出，重定向到踢出后的地址</span></span><br><span class="line">		<span class="keyword">if</span> (session.getAttribute(kickoutAttrName) != <span class="keyword">null</span> &amp;&amp; (Boolean)session.getAttribute(kickoutAttrName) == <span class="keyword">true</span>) &#123;</span><br><span class="line">			<span class="comment">//会话被踢出了 </span></span><br><span class="line">			<span class="keyword">try</span> &#123; </span><br><span class="line">				<span class="comment">//退出登录</span></span><br><span class="line">				subject.logout(); </span><br><span class="line">			&#125; <span class="keyword">catch</span> (Exception e) &#123; </span><br><span class="line">				logger.warn(e.getMessage());</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			saveRequest(request); </span><br><span class="line">			<span class="comment">//重定向	</span></span><br><span class="line">			logger.info(<span class="string">"用户登录人数超过限制, 重定向到&#123;&#125;"</span>, kickoutUrl);</span><br><span class="line">			String reason = URLEncoder.encode(<span class="string">"账户已超过登录人数限制"</span>, <span class="string">"UTF-8"</span>);</span><br><span class="line">			String redirectUrl = kickoutUrl  + (kickoutUrl.contains(<span class="string">"?"</span>) ? <span class="string">"&amp;"</span> : <span class="string">"?"</span>) + <span class="string">"shiroLoginFailure="</span> + reason;  </span><br><span class="line">			WebUtils.issueRedirect(request, response, redirectUrl); </span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125; </span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>; </span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ehcache配置"><a href="#ehcache配置" class="headerlink" title="ehcache配置"></a>ehcache配置</h3><p>ehcache-shiro.xml加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 用户队列缓存10分钟 --&gt;</span><br><span class="line">&lt;cache name=&quot;shiro-kickout-session&quot;</span><br><span class="line">       maxEntriesLocalHeap=&quot;2000&quot;</span><br><span class="line">       eternal=&quot;false&quot;</span><br><span class="line">       timeToIdleSeconds=&quot;3600&quot;</span><br><span class="line">       timeToLiveSeconds=&quot;0&quot;</span><br><span class="line">       overflowToDisk=&quot;false&quot;</span><br><span class="line">       statistics=&quot;true&quot;&gt;</span><br><span class="line">&lt;/cache&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="shiro配置"><a href="#shiro配置" class="headerlink" title="shiro配置"></a>shiro配置</h3><p><strong>ShiroConfig.java中注入相关对象</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会话管理器</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> sessionManager</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DefaultWebSessionManager <span class="title">configWebSessionManager</span><span class="params">()</span></span>&#123;</span><br><span class="line">    DefaultWebSessionManager manager = <span class="keyword">new</span> DefaultWebSessionManager();</span><br><span class="line">    <span class="comment">// 加入缓存管理器</span></span><br><span class="line">    manager.setCacheManager(ehCacheManager());</span><br><span class="line">    <span class="comment">// 删除过期的session</span></span><br><span class="line">    manager.setDeleteInvalidSessions(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置全局session超时时间</span></span><br><span class="line">    manager.setGlobalSessionTimeout(<span class="number">1</span> * <span class="number">60</span> *<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 是否定时检查session</span></span><br><span class="line">    manager.setSessionValidationSchedulerEnabled(<span class="keyword">true</span>);</span><br><span class="line">    manager.setSessionValidationScheduler(configSessionValidationScheduler());</span><br><span class="line">    manager.setSessionIdUrlRewritingEnabled(<span class="keyword">false</span>);</span><br><span class="line">    manager.setSessionIdCookieEnabled(<span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">return</span> manager;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * session会话验证调度器</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> session会话验证调度器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ExecutorServiceSessionValidationScheduler <span class="title">configSessionValidationScheduler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	ExecutorServiceSessionValidationScheduler sessionValidationScheduler = <span class="keyword">new</span> ExecutorServiceSessionValidationScheduler();</span><br><span class="line">	<span class="comment">//设置session的失效扫描间隔，单位为毫秒</span></span><br><span class="line">	sessionValidationScheduler.setInterval(<span class="number">300</span>*<span class="number">1000</span>);</span><br><span class="line">	<span class="keyword">return</span> sessionValidationScheduler;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 限制同一账号登录同时登录人数控制</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 过滤器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> KickoutSessionControlFilter <span class="title">kickoutSessionControlFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    KickoutSessionControlFilter kickoutSessionControlFilter = <span class="keyword">new</span> KickoutSessionControlFilter();</span><br><span class="line">    <span class="comment">//使用cacheManager获取相应的cache来缓存用户登录的会话；用于保存用户—会话之间的关系的；</span></span><br><span class="line">    <span class="comment">//这里我们还是用之前shiro使用的redisManager()实现的cacheManager()缓存管理</span></span><br><span class="line">    <span class="comment">//也可以重新另写一个，重新配置缓存时间之类的自定义缓存属性</span></span><br><span class="line">    kickoutSessionControlFilter.setCacheManager(ehCacheManager());</span><br><span class="line">    <span class="comment">//用于根据会话ID，获取会话进行踢出操作的；</span></span><br><span class="line">    kickoutSessionControlFilter.setSessionManager(configWebSessionManager());</span><br><span class="line">    <span class="comment">//是否踢出后来登录的，默认是false；即后者登录的用户踢出前者登录的用户；踢出顺序。</span></span><br><span class="line">    kickoutSessionControlFilter.setKickoutAfter(<span class="keyword">false</span>);</span><br><span class="line">    <span class="comment">//同一个用户最大的会话数，默认1；比如2的意思是同一个用户允许最多同时两个人登录；</span></span><br><span class="line">    kickoutSessionControlFilter.setMaxSession(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//被踢出后重定向到的地址；</span></span><br><span class="line">    kickoutSessionControlFilter.setKickoutUrl(<span class="string">"/login"</span>);</span><br><span class="line">    <span class="keyword">return</span> kickoutSessionControlFilter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>shiro过滤链中加入并发登录人数过滤器</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filterChainDefinitionMap.put(<span class="string">"/**"</span>, <span class="string">"kickout,user"</span>);</span><br></pre></td></tr></table></figure>
+<p>访问任意链接均需要认证通过以及限制并发登录次数</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    gcyml
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/" title="springboot-shiro-尝试登录次数限制与并发登录人数控制">http://yoursite.com/2018/05/21/springboot-shiro-尝试登录次数限制与并发登录人数控制/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+          
+            <a href="/tags/Shiro/" rel="tag"># Shiro</a>
+          
+            <a href="/tags/Mybatis-Plus/" rel="tag"># Mybatis-Plus</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/springboot-shiro-验证码与记住登录/" rel="next" title="springboot-shiro-验证码与记住登录">
+                <i class="fa fa-chevron-left"></i> springboot-shiro-验证码与记住登录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/11/ArrayList源码解析/" rel="prev" title="ArrayList源码解析">
+                ArrayList源码解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/user.jpg" alt="gcyml">
+            
+              <p class="site-author-name" itemprop="name">gcyml</p>
+              <p class="site-description motion-element" itemprop="description">个人分享博客</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/gcyml" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:mrwanggc@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#尝试登录次数控制实现"><span class="nav-number">1.</span> <span class="nav-text">尝试登录次数控制实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现原理"><span class="nav-number">1.1.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shiro-ehcache配置"><span class="nav-number">1.2.</span> <span class="nav-text">shiro-ehcache配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RetryLimitCredentialsMatcher"><span class="nav-number">1.3.</span> <span class="nav-text">#RetryLimitCredentialsMatcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shiro配置修改"><span class="nav-number">1.4.</span> <span class="nav-text">Shiro配置修改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发在线人数控制实现"><span class="nav-number">2.</span> <span class="nav-text">并发在线人数控制实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#KickoutSessionControlFilter"><span class="nav-number">2.1.</span> <span class="nav-text">KickoutSessionControlFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ehcache配置"><span class="nav-number">2.2.</span> <span class="nav-text">ehcache配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shiro配置"><span class="nav-number">2.3.</span> <span class="nav-text">shiro配置</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gcyml</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'gcyml',
+            repo: 'blogComment',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '4d56f031a4c58352d8e5ffedc428084e6ab71270',
+            
+                client_id: '04d33d137cfd4fa44380'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
