@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="LinkedHashMap 简介HashMap 是 Java 中非常常见的集合，但是 HashMap 有一个问题，就是迭代HashMap的顺序并不是HashMap放置的顺序。在一些应用场景中，我们是希望获得有序的 Map 的。正是基于此，就有了 LinkedHashMap。LinkedHashMap 继承了 HashMap，在 HashMap 的基础上，通过内部维护一个双向链表，能够保证元素迭代的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LinkedHashMap 源码解析（基于 JDK1.7）">
+<meta property="og:url" content="http://yoursite.com/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/index.html">
+<meta property="og:site_name" content="Gcyml&#39;s Blog">
+<meta property="og:description" content="LinkedHashMap 简介HashMap 是 Java 中非常常见的集合，但是 HashMap 有一个问题，就是迭代HashMap的顺序并不是HashMap放置的顺序。在一些应用场景中，我们是希望获得有序的 Map 的。正是基于此，就有了 LinkedHashMap。LinkedHashMap 继承了 HashMap，在 HashMap 的基础上，通过内部维护一个双向链表，能够保证元素迭代的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-22T15:35:59.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LinkedHashMap 源码解析（基于 JDK1.7）">
+<meta name="twitter:description" content="LinkedHashMap 简介HashMap 是 Java 中非常常见的集合，但是 HashMap 有一个问题，就是迭代HashMap的顺序并不是HashMap放置的顺序。在一些应用场景中，我们是希望获得有序的 Map 的。正是基于此，就有了 LinkedHashMap。LinkedHashMap 继承了 HashMap，在 HashMap 的基础上，通过内部维护一个双向链表，能够保证元素迭代的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/">
+
+
+
+
+
+  <title>LinkedHashMap 源码解析（基于 JDK1.7） | Gcyml's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Gcyml's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">哪里有彩虹告诉我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gcyml">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/user.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gcyml's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LinkedHashMap 源码解析（基于 JDK1.7）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-22T21:23:30+08:00">
+                2019-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="LinkedHashMap-简介"><a href="#LinkedHashMap-简介" class="headerlink" title="LinkedHashMap 简介"></a>LinkedHashMap 简介</h2><p>HashMap 是 Java 中非常常见的集合，但是 HashMap 有一个问题，就是<strong>迭代HashMap的顺序并不是HashMap放置的顺序</strong>。在一些应用场景中，我们是希望获得有序的 Map 的。<br>正是基于此，就有了 LinkedHashMap。LinkedHashMap 继承了 HashMap，在 HashMap 的基础上，通过内部维护一个双向链表，能够保证元素迭代的顺序。其顺序可以是插入顺序或者是访问顺序。</p>
+<p>在这里对源码的分析，就不再重复 HashMap 中已存在的内容，只着重于 LinkedHashMap 中独有的部分。</p>
+<h2 id="LinkedHashMap-中新增的属性"><a href="#LinkedHashMap-中新增的属性" class="headerlink" title="LinkedHashMap 中新增的属性"></a>LinkedHashMap 中新增的属性</h2><p>LinkedHashMap 中加入了两个属性：</p>
+<ol>
+<li><strong>header：</strong> 双向链表中的头</li>
+<li><strong>accessOrder：</strong> 访问顺序，默认为 false，即插入顺序。</li>
+</ol>
+<h2 id="LinkedHashMap-内部键值对类-Entry"><a href="#LinkedHashMap-内部键值对类-Entry" class="headerlink" title="LinkedHashMap 内部键值对类 Entry"></a>LinkedHashMap 内部键值对类 Entry</h2><p>LinkedHashMap 的内部类 Entry 实现。<br>Entry 继承了 HashMap 的 Entry，加入了关于双向链表的属性和常用方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">HashMap</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    Entry&lt;K,V&gt; before, after;</span><br><span class="line"></span><br><span class="line">    Entry(<span class="keyword">int</span> hash, K key, V value, HashMap.Entry&lt;K,V&gt; next) &#123;</span><br><span class="line">        <span class="keyword">super</span>(hash, key, value, next);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从双向链表中删除</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        before.after = after;</span><br><span class="line">        after.before = before;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在指定节点前插入节点</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addBefore</span><span class="params">(Entry&lt;K,V&gt; existingEntry)</span> </span>&#123;</span><br><span class="line">        after  = existingEntry;</span><br><span class="line">        before = existingEntry.before;</span><br><span class="line">        before.after = <span class="keyword">this</span>;</span><br><span class="line">        after.before = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若为访问顺序，则移动节点到链尾</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">recordAccess</span><span class="params">(HashMap&lt;K,V&gt; m)</span> </span>&#123;</span><br><span class="line">        LinkedHashMap&lt;K,V&gt; lm = (LinkedHashMap&lt;K,V&gt;)m;</span><br><span class="line">        <span class="keyword">if</span> (lm.accessOrder) &#123;</span><br><span class="line">            lm.modCount++;</span><br><span class="line">            remove();</span><br><span class="line">            addBefore(lm.header);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">recordRemoval</span><span class="params">(HashMap&lt;K,V&gt; m)</span> </span>&#123;</span><br><span class="line">        remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="LinkedHashMap-重写的方法"><a href="#LinkedHashMap-重写的方法" class="headerlink" title="LinkedHashMap 重写的方法"></a>LinkedHashMap 重写的方法</h2><h3 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h3><p>构造方法调用了 HashMap 的方法，加入了初始化 <code>accessOrder</code> 为 false。以及重写了 <code>init</code> 方法。</p>
+<p>init 方法是在 HashMap 构造方法中会调用到的方法。原来为空实现，这里加入了初始化双向链表的操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    header = <span class="keyword">new</span> Entry&lt;&gt;(-<span class="number">1</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">    header.before = header.after = header;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="添加元素时对双向链表的维护"><a href="#添加元素时对双向链表的维护" class="headerlink" title="添加元素时对双向链表的维护"></a>添加元素时对双向链表的维护</h3><h4 id="addEntry-方法"><a href="#addEntry-方法" class="headerlink" title="addEntry 方法"></a>addEntry 方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addEntry</span><span class="params">(<span class="keyword">int</span> hash, K key, V value, <span class="keyword">int</span> bucketIndex)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.addEntry(hash, key, value, bucketIndex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Remove eldest entry if instructed</span></span><br><span class="line">    Entry&lt;K,V&gt; eldest = header.after;</span><br><span class="line">    <span class="keyword">if</span> (removeEldestEntry(eldest)) &#123;</span><br><span class="line">        removeEntryForKey(eldest.key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="createEntry-方法"><a href="#createEntry-方法" class="headerlink" title="createEntry 方法"></a>createEntry 方法</h4><p>创建键值对放入桶中，在双向链表链尾中加入该节点。可以看到这里所有的插入操作，都是把元素插入到链表的头部，因此只要遍历 after，即为插入排序迭代。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">createEntry</span><span class="params">(<span class="keyword">int</span> hash, K key, V value, <span class="keyword">int</span> bucketIndex)</span> </span>&#123;</span><br><span class="line">    HashMap.Entry&lt;K,V&gt; old = table[bucketIndex];</span><br><span class="line">    Entry&lt;K,V&gt; e = <span class="keyword">new</span> Entry&lt;&gt;(hash, key, value, old);</span><br><span class="line">    table[bucketIndex] = e;</span><br><span class="line">    e.addBefore(header);</span><br><span class="line">    size++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="transfer-方法"><a href="#transfer-方法" class="headerlink" title="transfer 方法"></a>transfer 方法</h4><p>transfer 方法只有 resize 方法会调用到，也就是 Map 动态扩充时。<br>这里就是遍历双向链表，用头插法把键值对插入到桶中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">transfer</span><span class="params">(HashMap.Entry[] newTable, <span class="keyword">boolean</span> rehash)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> newCapacity = newTable.length;</span><br><span class="line">    <span class="keyword">for</span> (Entry&lt;K,V&gt; e = header.after; e != header; e = e.after) &#123;</span><br><span class="line">        <span class="keyword">if</span> (rehash)</span><br><span class="line">            e.hash = (e.key == <span class="keyword">null</span>) ? <span class="number">0</span> : hash(e.key);</span><br><span class="line">        <span class="keyword">int</span> index = indexFor(e.hash, newCapacity);</span><br><span class="line">        e.next = newTable[index];</span><br><span class="line">        newTable[index] = e;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="访问顺序的实现原理"><a href="#访问顺序的实现原理" class="headerlink" title="访问顺序的实现原理"></a>访问顺序的实现原理</h3><p>在调用 get 方法和添加元素时键值已存在时，均会调用 Entry 的 <code>recordAccess</code> 方法。可以看到，若为访问顺序时， <code>recordAccess</code> 会把该元素移动到链表的头部。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recordAccess</span><span class="params">(HashMap&lt;K,V&gt; m)</span> </span>&#123;</span><br><span class="line">    LinkedHashMap&lt;K,V&gt; lm = (LinkedHashMap&lt;K,V&gt;)m;</span><br><span class="line">    <span class="keyword">if</span> (lm.accessOrder) &#123;</span><br><span class="line">        lm.modCount++;</span><br><span class="line">        remove();</span><br><span class="line">        addBefore(lm.header);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="基于-LinkedHashMap-实现-FIFO-和-LRU"><a href="#基于-LinkedHashMap-实现-FIFO-和-LRU" class="headerlink" title="基于 LinkedHashMap 实现 FIFO 和 LRU"></a>基于 LinkedHashMap 实现 FIFO 和 LRU</h3><blockquote>
+<p><strong>FIFO（First In First out）：</strong> 先见先出，淘汰最先近来的页面，新进来的页面最迟被淘汰，完全符合队列。<br><strong>LRU（Least recently used）:</strong> 最近最少使用，淘汰最近不使用的页面。</p>
+</blockquote>
+<p>在前面的 <code>addEntry</code> 方法中，这里还调用了一个判断方法 <code>removeEldestEntry</code>，若为真，则删除链尾元素。<strong>我们可以利用此方法来实现 <code>FIFO</code> 和 <code>LRU</code></strong>。<br>重写 <code>removeEldestEntry</code> 方法，若超过长度则删除链尾元素。<br>当为访问顺序时，由于长访问的都被移动到了链头位置，因此最少访问的元素在链表尾部。所以实现了 <code>LRU</code>。<br>为插入顺序时，最早插入的元素被移动到了链尾位置，删除链尾元素，则实现了 <code>FIFO</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addEntry</span><span class="params">(<span class="keyword">int</span> hash, K key, V value, <span class="keyword">int</span> bucketIndex)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.addEntry(hash, key, value, bucketIndex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Remove eldest entry if instructed</span></span><br><span class="line">    Entry&lt;K,V&gt; eldest = header.after;</span><br><span class="line">    <span class="keyword">if</span> (removeEldestEntry(eldest)) &#123;</span><br><span class="line">        removeEntryForKey(eldest.key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>LinkedHashMap 是在 HashMap 的基础上，加入了一个双向链表，所有的键值对元素都在这条双向链表上。通过维护双向链表，实现了顺序迭代。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    gcyml
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/" title="LinkedHashMap 源码解析（基于 JDK1.7）">http://yoursite.com/2019/01/22/LinkedHashMap-源码解析（基于-Jdk1-7）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/17/HashMap-源码解析（基于jdk-1-7）/" rel="next" title="HashMap 源码解析（基于jdk 1.7）">
+                <i class="fa fa-chevron-left"></i> HashMap 源码解析（基于jdk 1.7）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/user.jpg" alt="gcyml">
+            
+              <p class="site-author-name" itemprop="name">gcyml</p>
+              <p class="site-description motion-element" itemprop="description">个人分享博客</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/gcyml" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:mrwanggc@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashMap-简介"><span class="nav-number">1.</span> <span class="nav-text">LinkedHashMap 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashMap-中新增的属性"><span class="nav-number">2.</span> <span class="nav-text">LinkedHashMap 中新增的属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashMap-内部键值对类-Entry"><span class="nav-number">3.</span> <span class="nav-text">LinkedHashMap 内部键值对类 Entry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashMap-重写的方法"><span class="nav-number">4.</span> <span class="nav-text">LinkedHashMap 重写的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造方法"><span class="nav-number">4.1.</span> <span class="nav-text">构造方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加元素时对双向链表的维护"><span class="nav-number">4.2.</span> <span class="nav-text">添加元素时对双向链表的维护</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#addEntry-方法"><span class="nav-number">4.2.1.</span> <span class="nav-text">addEntry 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#createEntry-方法"><span class="nav-number">4.2.2.</span> <span class="nav-text">createEntry 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#transfer-方法"><span class="nav-number">4.2.3.</span> <span class="nav-text">transfer 方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问顺序的实现原理"><span class="nav-number">4.3.</span> <span class="nav-text">访问顺序的实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于-LinkedHashMap-实现-FIFO-和-LRU"><span class="nav-number">4.4.</span> <span class="nav-text">基于 LinkedHashMap 实现 FIFO 和 LRU</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gcyml</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'gcyml',
+            repo: 'blogComment',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '4d56f031a4c58352d8e5ffedc428084e6ab71270',
+            
+                client_id: '04d33d137cfd4fa44380'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
