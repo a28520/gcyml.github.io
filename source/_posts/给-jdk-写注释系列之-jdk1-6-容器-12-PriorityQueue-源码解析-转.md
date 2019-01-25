@@ -1,7 +1,9 @@
 ---
 title: 给 jdk 写注释系列之 jdk1.6 容器 (12)-PriorityQueue 源码解析 (转)
 date: 2019-01-24 22:15:26
-tags:
+categories: "Java" #文章分類目錄 可以省略
+tags: #文章標籤 可以省略
+     - PriorityQueue
 ---
 > 本来想自己写的，网上查找资料，发现这篇 [给 jdk 写注释系列之 jdk1.6 容器(12)-PriorityQueue 源码解析](https://www.cnblogs.com/tstd/p/5125949.html) 文章写的很详细，思路清晰。自己再写估计也达不到原文的水平，于是直接转载原文了。
 
