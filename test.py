@@ -131,8 +131,8 @@ def get_submission_by_id(submission_id):
     code = m1.groupdict()['code'] if m1 else None
     print(code)
 
-print(login('mrwanggc@gmail.com', 'wang.550550'))
+print(login('u', 'p'))
 # get_problems()
 # get_problem_by_slug('two-sum')
 get_submissions('two-sum')
-get_submission_by_id('195907532')
+get_submission_by_id('')
