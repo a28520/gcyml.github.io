@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Gcyml&#39;s Blog">
 <meta property="og:description" content="源码项目地址   尝试登录次数控制实现实现原理Realm在验证用户身份的时候，要进行密码匹配。最简单的情况就是明文直接匹配，然后就是加密匹配，这里的匹配工作则就是交给CredentialsMatcher来完成的。我们在这里继承这个接口，自定义一个密码匹配器，缓存入键值对用户名以及匹配次数，若通过密码匹配，则删除该键值对，若不匹配则匹配次数自增。超过给定的次数限制则抛出错误。这里缓存用的是ehcac">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-15T08:54:11.818Z">
+<meta property="og:updated_time" content="2019-03-17T15:02:59.820Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="springboot-shiro-尝试登录次数限制与并发登录人数控制">
 <meta name="twitter:description" content="源码项目地址   尝试登录次数控制实现实现原理Realm在验证用户身份的时候，要进行密码匹配。最简单的情况就是明文直接匹配，然后就是加密匹配，这里的匹配工作则就是交给CredentialsMatcher来完成的。我们在这里继承这个接口，自定义一个密码匹配器，缓存入键值对用户名以及匹配次数，若通过密码匹配，则删除该键值对，若不匹配则匹配次数自增。超过给定的次数限制则抛出错误。这里缓存用的是ehcac">
@@ -405,11 +405,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+            <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
           
-            <a href="/tags/Shiro/" rel="tag"># Shiro</a>
+            <a href="/tags/Shiro/" rel="tag"><i class="fa fa-tag"></i> Shiro</a>
           
-            <a href="/tags/Mybatis-Plus/" rel="tag"># Mybatis-Plus</a>
+            <a href="/tags/Mybatis-Plus/" rel="tag"><i class="fa fa-tag"></i> Mybatis-Plus</a>
           
         </div>
       
@@ -520,7 +520,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -531,7 +531,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -542,7 +542,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
